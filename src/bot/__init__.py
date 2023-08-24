@@ -1,6 +1,10 @@
 import discord
+from utils.env_loader import EnvLoader
 from discord.ext import commands, tasks
 
+env_loader = EnvLoader()
+
+# dicord bot's intents
 intents = discord.Intents.default()
 intents.guilds = True
 intents.members = True
@@ -18,3 +22,6 @@ class Bot(commands.Bot):
             return
         if message.content.startswith('!ping'):
             await message.channel.send('Pong!')
+
+    def run(self):
+        super().run(env_loader.get('DISCORD_BOT_TOKEN'), reconnect=True)

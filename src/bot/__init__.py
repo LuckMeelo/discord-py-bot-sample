@@ -1,8 +1,10 @@
 import discord
 from utils.env_loader import EnvLoader
+from utils.config_loader import ConfigLoader
 from discord.ext import commands, tasks
 
-env_loader = EnvLoader()
+env = EnvLoader()
+config = ConfigLoader()
 
 # dicord bot's intents
 intents = discord.Intents.default()
@@ -12,7 +14,7 @@ intents.message_content = True
 
 class Bot(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix="!", intents=intents)
+        super().__init__(command_prefix=config.get('prefix'), intents=intents)
 
     async def on_ready(self):
         print(f'Logged in as {self.user.name} (ID: {self.user.id})')
@@ -24,4 +26,4 @@ class Bot(commands.Bot):
             await message.channel.send('Pong!')
 
     def run(self):
-        super().run(env_loader.get('DISCORD_BOT_TOKEN'), reconnect=True)
+        super().run(env.get('DISCORD_BOT_TOKEN'), reconnect=True)

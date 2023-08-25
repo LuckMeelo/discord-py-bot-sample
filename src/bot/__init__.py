@@ -1,61 +1,65 @@
-import platform, os
+import platform
+import os
 import asyncio
 
 import discord
 from discord.ext import commands, tasks
 
+# Importing components from the project
 from utils.env_loader import EnvLoader
 from utils.config_loader import ConfigLoader
 from utils.logger import build_logger
 
-
+# List of extensions (cogs) to load
 EXTENSIONS = [
     # commands
-    "bot.commands.ping",
+    "bot.cogs.fun",
     # events
-    "bot.events.command_events",
+    "bot.cogs.events.command_events",
+    "bot.cogs.events.message_events",
 ]
 
+# Load environment variables
 env = EnvLoader()
+
+# Load configuration from config.json
 config = ConfigLoader()
 
-# dicord bot's intents
+# Set up bot intents
 intents = discord.Intents.default()
-intents.guilds = True
-intents.members = True
-intents.message_content = True        
+intents.guilds = True  # Enable guild-related events
+intents.members = True  # Allow receiving events related to members
 
+# Subclassing commands.Bot to customize bot behavior
 class Bot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=config.get('prefix'), intents=intents)
+        # Adding config and a logger
+        self.config = config
         self.logger = build_logger(name=config.get('bot_name'), logfilename=config.get('log_filename'))
+        # Adding all cogs
         asyncio.run(self._load_cogs())
 
     async def on_ready(self):
         '''
-        Print general infos about the bot and the platform its running on.
+        Event handler: Called when the bot is ready.
         '''
+        # Print general information about the bot and the platform it's running on
         self.logger.info(f"Logged in as {self.user.name}")
         self.logger.info(f"discord.py API version: {discord.__version__}")
         self.logger.info(f"Python version: {platform.python_version()}")
         self.logger.info(f"Running on: {platform.system()} {platform.release()} ({os.name})")
         self.logger.info("-------------------")
 
-    async def on_message(self, message):
-        '''
-        Process every messages sent by users and trigger the appropriate
-        command.
-        '''
-        if message.author == self.user:
-            return
-        await self.process_commands(message)
-
-
     async def _load_cogs(self):
+        '''
+        Load all cogs (extensions) into the bot.
+        '''
         for extension in EXTENSIONS:
             await self.load_extension(extension)
-    
-    def run(self):
-        super().run(env.get('DISCORD_BOT_TOKEN'), reconnect=True)
 
-    
+    def run(self):
+        '''
+        Run the bot using the token from environment variables.
+        '''
+        super().run(env.get('DISCORD_BOT_TOKEN'), reconnect=True)

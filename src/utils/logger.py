@@ -1,19 +1,22 @@
-
 import logging
 from logging import Logger
 
 class LoggingFormatter(logging.Formatter):
-    # Colors
+    '''
+    Custom logging formatter class
+    '''
+    # ANSI color codes
     black = "\x1b[30m"
     red = "\x1b[31m"
     green = "\x1b[32m"
     yellow = "\x1b[33m"
     blue = "\x1b[34m"
     gray = "\x1b[38m"
-    # Styles
+    # ANSI style codes
     reset = "\x1b[0m"
     bold = "\x1b[1m"
 
+    # Color mapping for log levels
     COLORS = {
         logging.DEBUG: gray + bold,
         logging.INFO: blue + bold,
@@ -32,8 +35,10 @@ class LoggingFormatter(logging.Formatter):
         formatter = logging.Formatter(format, "%Y-%m-%d %H:%M:%S", style="{")
         return formatter.format(record)
 
-
-def build_logger(name: str, logfilename: str="bot.log") -> Logger:
+def build_logger(name: str, logfilename: str = "bot.log") -> Logger:
+    '''
+    Function to build and configure the logger
+    '''
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
 
@@ -41,6 +46,7 @@ def build_logger(name: str, logfilename: str="bot.log") -> Logger:
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(LoggingFormatter())
     console_handler.setLevel(logging.INFO)
+
     # File handler
     file_handler = logging.FileHandler(filename=logfilename, encoding="utf-8", mode="w")
     file_handler_formatter = logging.Formatter(
@@ -51,4 +57,4 @@ def build_logger(name: str, logfilename: str="bot.log") -> Logger:
     # Add the handlers
     logger.addHandler(console_handler)
     logger.addHandler(file_handler)
-    return (logger)
+    return logger

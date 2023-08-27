@@ -9,6 +9,7 @@ from discord.ext import commands, tasks
 from utils.env_loader import EnvLoader
 from utils.config_loader import ConfigLoader
 from utils.logger import build_logger
+import utils.embeds as embeds
 
 # List of extensions (cogs) to load
 EXTENSIONS = [
@@ -43,17 +44,6 @@ class Bot(commands.Bot):
         self.remove_command('help')
         # Adding all cogs
         asyncio.run(self._load_cogs())
-
-    async def on_ready(self):
-        '''
-        Event handler: Called when the bot is ready.
-        '''
-        # Print general information about the bot and the platform it's running on
-        self.logger.info(f"Logged in as {self.user.name}")
-        self.logger.info(f"discord.py API version: {discord.__version__}")
-        self.logger.info(f"Python version: {platform.python_version()}")
-        self.logger.info(f"Running on: {platform.system()} {platform.release()} ({os.name})")
-        self.logger.info("-------------------")
     
     async def _load_cogs(self):
         '''
@@ -67,3 +57,95 @@ class Bot(commands.Bot):
         Run the bot using the token from environment variables.
         '''
         super().run(env.get('DISCORD_BOT_TOKEN'), reconnect=True)
+
+    async def on_ready(self):
+        '''
+        Event handler: Called when the bot is ready.
+        '''
+        # Print general information about the bot and the platform it's running on
+        self.logger.info(f"Logged in as {self.user.name}")
+        self.logger.info(f"discord.py API version: {discord.__version__}")
+        self.logger.info(f"Python version: {platform.python_version()}")
+        self.logger.info(f"Running on: {platform.system()} {platform.release()} ({os.name})")
+        self.logger.info("-------------------")
+    
+    # Cog event: Called when a message is sent
+    async def on_message(self, message):
+        '''
+        Process every messages sent by users and trigger the appropriate command.
+        '''
+        # Avoid processing the bot's own messages
+        if message.author.bot:
+            return
+        # Process commands in the message content
+        await self.bot.process_commands(message)
+    
+     # Cog event: Called when a command is successfully executed
+    async def on_command_completion(self, context: commands.Context) -> None:
+        '''
+        This event is executed every time a normal command has been *successfully* executed.
+        '''
+        full_command_name = context.command.qualified_name
+        split = full_command_name.split(" ")
+        executed_command = str(split[0])
+
+        if context.guild is not None:
+            self.bot.logger.info(
+                f"Executed {executed_command} command in {context.guild.name} (ID: {context.guild.id}) by {context.author} (ID: {context.author.id})")
+        else:
+            self.bot.logger.info(
+                f"Executed {executed_command} command by {context.author} (ID: {context.author.id}) in DMs")
+
+    # Cog event: Called when a command catches an error
+    async def on_command_error(self, context: commands.Context, error) -> None:
+        '''
+        This event is executed every time a normal valid command catches an error.
+        '''
+        # Handle different types of errors
+        if isinstance(error, commands.CommandNotFound):
+            self.bot.logger.warning(
+                f"Command not found: {context.message.content} by {context.author} (ID: {context.author.id})")
+
+        elif isinstance(error, commands.CommandOnCooldown):
+            # Calculate the cooldown in hours, minutes, and seconds
+            minutes, seconds = divmod(error.retry_after, 60)
+            hours, minutes = divmod(minutes, 60)
+            hours = hours % 24
+            
+            # Create and send an error embed
+            embed = embeds.embed_error(
+                description=f"**Please slow down** - You can use this command again in \
+                    {f'{round(hours)} hours' if round(hours) > 0 else ''} \
+                        {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} \
+                            {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
+            )
+            await context.send(embed=embed)
+
+        elif isinstance(error, commands.MissingPermissions):
+            # Create and send an error embed for missing permissions
+            embed = embeds.embed_error(
+                description="You are missing the permission(s) `"
+                + ", ".join(error.missing_permissions)
+                + "` to execute this command!",
+            )
+            await context.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = embeds.embed_error(
+                description="I am missing the permission(s) `"
+                + ", ".join(error.missing_permissions)
+                + "` to fully perform this command!",
+            )
+            await context.send(embed=embed)
+
+        elif isinstance(error, commands.MissingRequiredArgument):
+            embed = embeds.embed_error(
+                # We need to capitalize because the command arguments have no capital letter in the code.
+                description=str(error).capitalize(),
+            )
+            await context.send(embed=embed)
+
+        # ... (other error cases)
+        
+        else:
+            raise error

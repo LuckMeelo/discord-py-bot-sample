@@ -16,18 +16,6 @@ class MessageEventsCog(commands.Cog):
     async def on_ready(self) -> None:
         self.bot.logger.info(f"Message events cog ready")
 
-    # Cog event: Called when a message is sent
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        '''
-        Process every messages sent by users and trigger the appropriate command.
-        '''
-        # Avoid processing the bot's own messages
-        if message.author.bot:
-            return
-        # Process commands in the message content
-        await self.bot.process_commands(message)
-
 # Function to set up the cog
 async def setup(bot):
     await bot.add_cog(MessageEventsCog(bot))

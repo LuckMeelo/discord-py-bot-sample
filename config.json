@@ -1,5 +1,9 @@
 {
     "bot_name": "uwu",
+    "version": 0.1,
     "prefix": "!",
-    "log_filename": "discord.log"
+    "owner_id": "474617964365217812",
+    "owner_name": "melimeelo",
+    "log_filename": "discord.log",
+    "link": "https://github.com/LuckMeelo/discord-py-bot-sample"
 }

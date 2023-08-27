@@ -12,8 +12,9 @@ from utils.logger import build_logger
 
 # List of extensions (cogs) to load
 EXTENSIONS = [
-    # commands
-    "bot.cogs.fun",
+    # modules
+    "bot.cogs.general",
+    "bot.cogs.sample",
     # events
     "bot.cogs.events.command_events",
     "bot.cogs.events.message_events",
@@ -29,6 +30,7 @@ config = ConfigLoader()
 intents = discord.Intents.default()
 intents.guilds = True  # Enable guild-related events
 intents.members = True  # Allow receiving events related to members
+intents.message_content = True
 
 # Subclassing commands.Bot to customize bot behavior
 class Bot(commands.Bot):
@@ -37,6 +39,8 @@ class Bot(commands.Bot):
         # Adding config and a logger
         self.config = config
         self.logger = build_logger(name=config.get('bot_name'), logfilename=config.get('log_filename'))
+        # Remove help command to add our custom one
+        self.remove_command('help')
         # Adding all cogs
         asyncio.run(self._load_cogs())
 
@@ -50,7 +54,7 @@ class Bot(commands.Bot):
         self.logger.info(f"Python version: {platform.python_version()}")
         self.logger.info(f"Running on: {platform.system()} {platform.release()} ({os.name})")
         self.logger.info("-------------------")
-
+    
     async def _load_cogs(self):
         '''
         Load all cogs (extensions) into the bot.

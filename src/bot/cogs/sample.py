@@ -4,7 +4,7 @@ from discord.ext import commands
 # Define a sample module
 class SampleCog(commands.Cog, name="SampleModule"):
     '''
-    A cog that contains a simple example command for the bot.
+    A module that contains a simple example command for the bot.
     '''
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot

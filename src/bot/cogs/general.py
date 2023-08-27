@@ -3,7 +3,7 @@ from discord.ext import commands
 
 class GeneralCog(commands.Cog, name="General"):
     '''
-    A cog that contains general commands for the bot.
+    A module that contains general commands for the bot.
     '''
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -17,7 +17,6 @@ class GeneralCog(commands.Cog, name="General"):
         '''
         Displays information about bot modules and commands.
         '''
-
         prefix = self.bot.config.get('prefix') # Bot's command prefix loaded from config
         version = self.bot.config.get('version') # Bot's version loaded from config
         link = self.bot.config.get('link') # Bot's link loaded from config

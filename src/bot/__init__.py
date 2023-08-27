@@ -15,10 +15,7 @@ import utils.embeds as embeds
 EXTENSIONS = [
     # modules
     "bot.cogs.general",
-    "bot.cogs.sample",
-    # events
-    "bot.cogs.events.command_events",
-    "bot.cogs.events.message_events",
+    "bot.cogs.sample"
 ]
 
 # Load environment variables
@@ -75,10 +72,10 @@ class Bot(commands.Bot):
         Process every messages sent by users and trigger the appropriate command.
         '''
         # Avoid processing the bot's own messages
-        if message.author.bot:
+        if message.author == self.user or message.author.bot:
             return
         # Process commands in the message content
-        await self.bot.process_commands(message)
+        await self.process_commands(message)
     
      # Cog event: Called when a command is successfully executed
     async def on_command_completion(self, context: commands.Context) -> None:
@@ -90,10 +87,10 @@ class Bot(commands.Bot):
         executed_command = str(split[0])
 
         if context.guild is not None:
-            self.bot.logger.info(
+            self.logger.info(
                 f"Executed {executed_command} command in {context.guild.name} (ID: {context.guild.id}) by {context.author} (ID: {context.author.id})")
         else:
-            self.bot.logger.info(
+            self.logger.info(
                 f"Executed {executed_command} command by {context.author} (ID: {context.author.id}) in DMs")
 
     # Cog event: Called when a command catches an error
@@ -103,7 +100,7 @@ class Bot(commands.Bot):
         '''
         # Handle different types of errors
         if isinstance(error, commands.CommandNotFound):
-            self.bot.logger.warning(
+            self.logger.warning(
                 f"Command not found: {context.message.content} by {context.author} (ID: {context.author.id})")
 
         elif isinstance(error, commands.CommandOnCooldown):

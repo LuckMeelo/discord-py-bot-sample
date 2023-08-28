@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import utils.embeds as embeds
 
 class GeneralCog(commands.Cog, name="General"):
     '''
@@ -11,6 +12,14 @@ class GeneralCog(commands.Cog, name="General"):
     @commands.Cog.listener()
     async def on_ready(self) -> None:
         self.bot.logger.info(f"Help Module ready")
+        
+    @commands.command(name="ping", description="Command to check bot's latency.")
+    async def ping(self, ctx: commands.Context):
+        '''
+        Ping command to check bot's latency.
+        '''
+        latency = round(self.bot.latency * 1000)  # Convert latency to milliseconds
+        await ctx.send(f"Pong! Latency: {latency}ms")
 
     @commands.command(name="help", description="Get information about bot modules and commands.")
     async def help(self, ctx, *modules):
@@ -32,8 +41,8 @@ class GeneralCog(commands.Cog, name="General"):
                 pass
 
             # Build the initial embed
-            emb = discord.Embed(title='Commands and Modules', color=discord.Color.blue(),
-                                description=f'Use `{prefix}help <module>` to learn more about a module :smiley:\n')
+            emb = embeds.default_embed(title='Commands and Modules', \
+                desc=f'Use `{prefix}help <module>` to learn more about a module :smiley:\n')
 
             # Adding the list of cogs to the embed
             cogs_desc = ''
@@ -58,30 +67,26 @@ class GeneralCog(commands.Cog, name="General"):
         elif len(modules) == 1:
             for cog in self.bot.cogs:
                 if cog.lower() == modules[0].lower():
-                    emb = discord.Embed(title=f'{cog} - Commands', description=self.bot.cogs[cog].__doc__,
-                                        color=discord.Color.green())
+                    emb = embeds.success_embed(title=f'{cog} - Commands', desc=self.bot.cogs[cog].__doc__)
                     for command in self.bot.get_cog(cog).get_commands():
                         if not command.hidden:
                             emb.add_field(name=f"`{prefix}{command.name}`", value=command.help, inline=False)
                     break
             else:
-                emb = discord.Embed(title="Module Not Found",
-                                    description=f"I haven't heard of a module called `{modules[0]}` before :scream:",
-                                    color=discord.Color.orange())
+                emb = embeds.warning_embed(title="Module Not Found",
+                                    desc=f"I haven't heard of a module called `{modules[0]}` before :scream:")
 
         # Too many module names requested - only one at a time allowed
         elif len(modules) > 1:
-            emb = discord.Embed(title="Too Many Modules",
-                                description="Please request only one module at a time :sweat_smile:",
-                                color=discord.Color.orange())
+            emb = embeds.warning_embed(title="Too Many Modules",
+                                desc="Please request only one module at a time :sweat_smile:")
 
         else:
-            emb = discord.Embed(title="Magical Place",
-                                description="I don't know how you got here, but I didn't expect this.\n"
+            emb = embeds.error_embed(title="Magical Place",
+                                desc="I don't know how you got here, but I didn't expect this.\n"
                                             "Please report this issue on GitHub: "
                                             "https://github.com/nonchris/discord-fury/issues\n"
-                                            "Thank you! ~Chris",
-                                color=discord.Color.red())
+                                            "Thank you! ~Chris")
 
         # Send the reply embed
         await ctx.send(embed=emb)

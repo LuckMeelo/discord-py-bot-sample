@@ -102,6 +102,11 @@ class Bot(commands.Bot):
         if isinstance(error, commands.CommandNotFound):
             self.logger.warning(
                 f"Command not found: {context.message.content} by {context.author} (ID: {context.author.id})")
+            embed = embeds.error_embed(
+                desc="You are missing the permission(s) `"
+                + "` to execute this command!",
+            )
+            await context.send(embed=embed)
 
         elif isinstance(error, commands.CommandOnCooldown):
             # Calculate the cooldown in hours, minutes, and seconds
@@ -110,8 +115,8 @@ class Bot(commands.Bot):
             hours = hours % 24
             
             # Create and send an error embed
-            embed = embeds.embed_error(
-                description=f"**Please slow down** - You can use this command again in \
+            embed = embeds.error_embed(
+                desc=f"**Please slow down** - You can use this command again in \
                     {f'{round(hours)} hours' if round(hours) > 0 else ''} \
                         {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} \
                             {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
@@ -120,25 +125,25 @@ class Bot(commands.Bot):
 
         elif isinstance(error, commands.MissingPermissions):
             # Create and send an error embed for missing permissions
-            embed = embeds.embed_error(
-                description="You are missing the permission(s) `"
+            embed = embeds.error_embed(
+                desc="You are missing the permission(s) `"
                 + ", ".join(error.missing_permissions)
                 + "` to execute this command!",
             )
             await context.send(embed=embed)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            embed = embeds.embed_error(
-                description="I am missing the permission(s) `"
+            embed = embeds.error_embed(
+                desc="I am missing the permission(s) `"
                 + ", ".join(error.missing_permissions)
                 + "` to fully perform this command!",
             )
             await context.send(embed=embed)
 
         elif isinstance(error, commands.MissingRequiredArgument):
-            embed = embeds.embed_error(
+            embed = embeds.error_embed(
                 # We need to capitalize because the command arguments have no capital letter in the code.
-                description=str(error).capitalize(),
+                desc=str(error).capitalize(),
             )
             await context.send(embed=embed)
 

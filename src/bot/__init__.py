@@ -15,7 +15,7 @@ import utils.embeds as embeds
 EXTENSIONS = [
     # modules
     "bot.cogs.general",
-    "bot.cogs.sample"
+    "bot.cogs.hello"
 ]
 
 # Load environment variables

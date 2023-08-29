@@ -23,9 +23,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run bot # run the bot
+      - name: Run the bot
         run: |
-          python3 ./src/main.py
+          python ./src/main.py
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
 
       # - name: Run tests
       #   run: pytest

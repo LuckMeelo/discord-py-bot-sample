@@ -13,7 +13,7 @@ class GeneralCog(commands.Cog, name="General"):
     async def on_ready(self) -> None:
         self.bot.logger.info(f"Help Module ready")
         
-    @commands.command(name="ping", description="Command to check bot's latency.")
+    @commands.hybrid_command(name="ping", description="Command to check bot's latency.", with_app_command=True)
     async def ping(self, ctx: commands.Context):
         '''
         Ping command to check bot's latency.

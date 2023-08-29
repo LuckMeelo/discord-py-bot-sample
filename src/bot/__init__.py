@@ -65,6 +65,8 @@ class Bot(commands.Bot):
         self.logger.info(f"Python version: {platform.python_version()}")
         self.logger.info(f"Running on: {platform.system()} {platform.release()} ({os.name})")
         self.logger.info("-------------------")
+        for guild in self.guilds:
+            await self.tree.sync(guild=discord.Object(id=guild.id))
     
     # Cog event: Called when a message is sent
     async def on_message(self, message):

@@ -15,7 +15,7 @@ class HelloCog(commands.Cog, name="Hello"):
         self.bot.logger.info(f"Hello Module ready")
 
     # Command definition: Hello command
-    @commands.command(name="hello", description="A friendly greeting command.")
+    @commands.hybrid_command(name="hello", description="A friendly greeting command.")
     async def hello(self, ctx: commands.Context):
         '''
         A friendly greeting command.

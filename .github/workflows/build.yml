@@ -25,7 +25,7 @@ jobs:
 
       - name: Run the bot
         run: |
-          python main.py &
+          python ./src/main.py &
           sleep 120  # Run the bot for 2 minutes (adjust as needed)
           pkill -f "python main.py"  # Terminate the bot after 2 minutes
         env:

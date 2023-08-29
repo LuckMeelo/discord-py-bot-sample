@@ -25,7 +25,9 @@ jobs:
 
       - name: Run the bot
         run: |
-          python ./src/main.py
+          python main.py &
+          sleep 120  # Run the bot for 2 minutes (adjust as needed)
+          pkill -f "python main.py"  # Terminate the bot after 2 minutes
         env:
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
 

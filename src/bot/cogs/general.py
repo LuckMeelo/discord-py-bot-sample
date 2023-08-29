@@ -20,6 +20,18 @@ class GeneralCog(commands.Cog, name="General"):
         '''
         latency = round(self.bot.latency * 1000)  # Convert latency to milliseconds
         await ctx.send(f"Pong! Latency: {latency}ms")
+    
+    @commands.hybrid_command(name="invite", description="Get an invite link of the bot to be able to invite it.")
+    async def invite(self, context: commands.Context) -> None:
+        '''
+        Sends an invite link for the bot in your dms.
+        '''
+        embed = embeds.default_embed(desc=f"Invite me by clicking [here]({self.bot.config.get('invite_url')}).")
+        try:
+            await context.author.send(embed=embed)
+            await context.send("Please check your dms !")
+        except discord.Forbidden:
+            await context.send(embed=embed)
 
     @commands.command(name="help", description="Get information about bot modules and commands.")
     async def help(self, ctx, *modules):

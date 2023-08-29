@@ -28,7 +28,7 @@ def success_embed(title: str="Success!", desc: str=None):
     embed = discord.Embed(title=title, description=desc, color=SUCCESS_COLOR)
     return (embed)
 
-def default_embed(title: str, desc: str):
+def default_embed(title: str=None, desc: str=None):
     '''
     An embed with default color
     '''

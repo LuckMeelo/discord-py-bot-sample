@@ -5,5 +5,6 @@
     "owner_id": "474617964365217812",
     "owner_name": "melimeelo",
     "log_filename": "discord.log",
-    "link": "https://github.com/LuckMeelo/discord-py-bot-sample"
+    "link": "https://github.com/LuckMeelo/discord-py-bot-sample",
+    "invite_url": "https://discord.com/api/oauth2/authorize?client_id=1144223107675082793&permissions=8&scope=bot"
 }

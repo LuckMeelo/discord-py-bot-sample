@@ -1,11 +1,13 @@
 import discord
 from discord.ext import commands
 
+
 # Define a sample module
 class HelloCog(commands.Cog, name="Hello"):
     '''
     A module that contains a simple hello command for the bot.
     '''
+
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
@@ -25,5 +27,7 @@ class HelloCog(commands.Cog, name="Hello"):
     # others module commands...
 
 # Function to set up the cog
+
+
 async def setup(bot):
     await bot.add_cog(HelloCog(bot))

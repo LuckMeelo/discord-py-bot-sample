@@ -1,5 +1,6 @@
 import json
 
+
 class ConfigLoader:
     def __init__(self, config_path='config.json'):
         # Initialize the ConfigLoader with the specified config file path
@@ -22,7 +23,7 @@ class ConfigLoader:
     def get(self, key, default=None):
         '''
         Get the value of a configuration variable using its key.
-        
+
         :param key: The key of the configuration variable.
         :param default: The default value to return if the variable is not set.
         :return: The value of the configuration variable or the default value if not set.

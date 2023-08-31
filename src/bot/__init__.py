@@ -30,18 +30,20 @@ intents.guilds = True  # Enable guild-related events
 intents.members = True  # Allow receiving events related to members
 intents.message_content = True
 
+
 # Subclassing commands.Bot to customize bot behavior
 class Bot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=config.get('prefix'), intents=intents)
         # Adding config and a logger
         self.config = config
-        self.logger = build_logger(name=config.get('bot_name'), logfilename=config.get('log_filename'))
+        self.logger = build_logger(name=config.get(
+            'bot_name'), logfilename=config.get('log_filename'))
         # Remove help command to add our custom one
         self.remove_command('help')
         # Adding all cogs
         asyncio.run(self._load_cogs())
-    
+
     async def _load_cogs(self):
         '''
         Load all cogs (extensions) into the bot.
@@ -63,11 +65,12 @@ class Bot(commands.Bot):
         self.logger.info(f"Logged in as {self.user.name}")
         self.logger.info(f"discord.py API version: {discord.__version__}")
         self.logger.info(f"Python version: {platform.python_version()}")
-        self.logger.info(f"Running on: {platform.system()} {platform.release()} ({os.name})")
+        self.logger.info(
+            f"Running on: {platform.system()} {platform.release()} ({os.name})")
         self.logger.info("-------------------")
         for guild in self.guilds:
             await self.tree.sync(guild=discord.Object(id=guild.id))
-    
+
     # Cog event: Called when a message is sent
     async def on_message(self, message):
         '''
@@ -78,7 +81,7 @@ class Bot(commands.Bot):
             return
         # Process commands in the message content
         await self.process_commands(message)
-    
+
      # Cog event: Called when a command is successfully executed
     async def on_command_completion(self, context: commands.Context) -> None:
         '''
@@ -115,7 +118,7 @@ class Bot(commands.Bot):
             minutes, seconds = divmod(error.retry_after, 60)
             hours, minutes = divmod(minutes, 60)
             hours = hours % 24
-            
+
             # Create and send an error embed
             embed = embeds.error_embed(
                 desc=f"**Please slow down** - You can use this command again in \
@@ -150,6 +153,6 @@ class Bot(commands.Bot):
             await context.send(embed=embed)
 
         # ... (other error cases)
-        
+
         else:
             raise error

@@ -1,6 +1,7 @@
 import logging
 from logging import Logger
 
+
 class LoggingFormatter(logging.Formatter):
     '''
     Custom logging formatter class
@@ -35,6 +36,7 @@ class LoggingFormatter(logging.Formatter):
         formatter = logging.Formatter(format, "%Y-%m-%d %H:%M:%S", style="{")
         return formatter.format(record)
 
+
 def build_logger(name: str, logfilename: str = "bot.log") -> Logger:
     '''
     Function to build and configure the logger
@@ -48,7 +50,8 @@ def build_logger(name: str, logfilename: str = "bot.log") -> Logger:
     console_handler.setLevel(logging.INFO)
 
     # File handler
-    file_handler = logging.FileHandler(filename=logfilename, encoding="utf-8", mode="w")
+    file_handler = logging.FileHandler(
+        filename=logfilename, encoding="utf-8", mode="w")
     file_handler_formatter = logging.Formatter(
         "[{asctime}] [{levelname:<8}] {name}: {message}", "%Y-%m-%d %H:%M:%S", style="{"
     )

@@ -30,17 +30,3 @@ jobs:
           kill $(pgrep -f "python main.py") || true # Terminate the bot after 2 minutes
         env:
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-
-      # - name: Run tests
-      #   run: pytest
-
-      # - name: Generate coverage report
-      #   run: coverage run -m pytest
-      #   continue-on-error: true
-
-      # - name: Upload coverage report
-      #   run: coverage xml
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: coverage-report
-      #     path: coverage.xml

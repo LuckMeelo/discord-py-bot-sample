@@ -68,10 +68,20 @@ class Bot(commands.Bot):
         self.logger.info(
             f"Running on: {platform.system()} {platform.release()} ({os.name})")
         self.logger.info("-------------------")
+        print(await self.tree.fetch_commands())
         for guild in self.guilds:
-            await self.tree.sync(guild=discord.Object(id=guild.id))
+            self.tree.copy_global_to(guild=guild)
+        await self.tree.sync()
+
+    async def on_guild_join(self, guild):
+        '''
+        Event handler: Called when the bot is invited/added to a server
+        '''
+        self.tree.copy_global_to(guild=guild)
+        await self.tree.sync()
 
     # Cog event: Called when a message is sent
+
     async def on_message(self, message):
         '''
         Process every messages sent by users and trigger the appropriate command.
@@ -104,12 +114,12 @@ class Bot(commands.Bot):
         This event is executed every time a normal valid command catches an error.
         '''
         # Handle different types of errors
+        print(error)
         if isinstance(error, commands.CommandNotFound):
             self.logger.warning(
                 f"Command not found: {context.message.content} by {context.author} (ID: {context.author.id})")
             embed = embeds.error_embed(
-                desc="You are missing the permission(s) `"
-                + "` to execute this command!",
+                desc="Command not found. Try !help"
             )
             await context.send(embed=embed)
 

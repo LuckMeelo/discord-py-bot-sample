@@ -15,7 +15,7 @@ class GeneralCog(commands.Cog, name="General"):
     async def on_ready(self) -> None:
         self.bot.logger.info(f"Help Module ready")
 
-    @commands.hybrid_command(name="ping", description="Command to check bot's latency.", with_app_command=True)
+    @commands.hybrid_command(name="ping", description="Command to check bot's latency.")
     async def ping(self, ctx: commands.Context):
         '''
         Ping command to check bot's latency.
@@ -24,21 +24,31 @@ class GeneralCog(commands.Cog, name="General"):
                         1000)  # Convert latency to milliseconds
         await ctx.send(f"Pong! Latency: {latency}ms")
 
+    @commands.hybrid_command(name="sync", description="Sync bot's command tree")
+    async def sync(self, ctx: commands.Context):
+        '''
+        Sync command to sync bot's command tree.
+        '''
+        guild = ctx.guild
+        self.bot.tree.copy_global_to(guild=guild)
+        await self.bot.tree.sync()
+        await ctx.send('Command tree synced.')
+
     @commands.hybrid_command(name="invite", description="Get an invite link of the bot to be able to invite it.")
-    async def invite(self, context: commands.Context) -> None:
+    async def invite(self, ctx: commands.Context) -> None:
         '''
         Sends an invite link for the bot in your dms.
         '''
         embed = embeds.default_embed(
             desc=f"Invite me by clicking [here]({self.bot.config.get('invite_url')}).")
         try:
-            await context.author.send(embed=embed)
-            await context.send("Please check your dms !")
+            await ctx.author.send(embed=embed)
+            await ctx.send("Please check your dms !")
         except discord.Forbidden:
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
     @commands.command(name="help", description="Get information about bot modules and commands.")
-    async def help(self, ctx, *modules):
+    async def help(self, ctx: commands.Context, *modules):
         '''
         Displays information about bot modules and commands.
         '''
